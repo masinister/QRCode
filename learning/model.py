@@ -11,10 +11,10 @@ class Encoder(nn.Module):
         self.input_size = input_size
         self.output_size = output_size
 
-        self.fc = nn.Sequential(nn.Linear(self.input_size, 128),
+        self.fc = nn.Sequential(nn.Linear(self.input_size, 256),
                                 nn.Dropout(0.1),
                                 nn.ReLU(),
-                                nn.Linear(128, self.output_size),
+                                nn.Linear(256, self.output_size),
                                 nn.Dropout(0.1),
                                 nn.ReLU())
 
@@ -32,10 +32,10 @@ class Decoder(nn.Module):
         self.input_size = input_size
         self.output_size = output_size
 
-        self.fc = nn.Sequential(nn.Linear(self.input_size, 128),
+        self.fc = nn.Sequential(nn.Linear(self.input_size, 256),
                                   nn.Dropout(0.1),
                                   nn.ReLU(),
-                                  nn.Linear(128, self.output_size),
+                                  nn.Linear(256, self.output_size),
                                   nn.Dropout(0.1),
                                   nn.ReLU())
 

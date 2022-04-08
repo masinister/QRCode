@@ -8,11 +8,11 @@ from learning import train
 from utils import train_test_split, testone
 
 device = torch.device("cuda")
-text_length = 10
-img_shape = (10,10)
+text_length = 16
+img_shape = (16,16)
 img_size = np.prod(img_shape)
 batch_size = 100
-num_epochs = 2
+num_epochs = 10
 
 data = TextDataset(length = text_length, device = device)
 
@@ -26,6 +26,6 @@ dec = Decoder(input_size = img_size, output_size = text_length).to(device)
 
 enc, dec = train(enc, dec, trainloader, testloader, device, num_epochs)
 
-x = np.random.randint(2, size=text_length)
+x = (torch.cuda.FloatTensor(text_length).uniform_() > 0.5).float()
 
 testone(enc, dec, x, img_shape, device)

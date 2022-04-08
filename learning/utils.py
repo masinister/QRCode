@@ -19,18 +19,16 @@ def train_test_split(dataset, test_split, batch_size):
 
     return trainloader, testloader
 
-def testone(enc, dec, text, shape, device):
-    y = enc(tensor(text, device = device).unsqueeze(0).float())
+def testone(enc, dec, x, shape, device):
+    enc.eval()
+    dec.eval()
+    y = enc(x)
+    out = dec(y)
+
     img = y.cpu().data.reshape(shape)
-
-    out = dec(y).cpu()
-    pred = out.round().int().cpu().data[0].numpy()
-
-    # res = out.clone().int().data.numpy()
-    # res[out == 0] = 0
-    # res[out != 0] = 1
+    pred = out.round().int()
     plt.imshow(img, interpolation='nearest', cmap = 'gray')
-    print(text)
+    print(x)
     print(pred)
-    print((pred == text).sum() / len(text))
+    print((pred == x).sum().item() / x.size(0))
     plt.show()
