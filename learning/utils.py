@@ -25,12 +25,16 @@ def testone(enc, dec, x, shape, device):
     enc.eval()
     dec.eval()
     y = enc(x)
+    t_y = transform_encoded_img(y.unsqueeze(0), shape, device)
     out = dec(y)
 
-    # img = y.cpu().data.reshape(shape)
-    img = transform_encoded_img(y.unsqueeze(0), shape, device).cpu().data.reshape(shape)
+    img = y.cpu().data.reshape(shape)
+    t_img = t_y.cpu().data.reshape(shape)
     pred = out.round().int()
-    plt.imshow(img, interpolation='nearest', cmap = 'gray')
+
+    fig, ax = plt.subplots(2)
+    ax[0].imshow(img, interpolation='nearest', cmap = 'gray')
+    ax[1].imshow(t_img, interpolation='nearest', cmap = 'gray')
     print(x)
     print(pred)
     print((pred == x).sum().item() / x.size(0))
@@ -39,7 +43,7 @@ def testone(enc, dec, x, shape, device):
 
 def transform_encoded_img(y, shape, device):
     img = y.view(y.size(0), shape[0], shape[1])
-    transform = T.RandomPerspective(distortion_scale=0.4, p=1.0)
+    transform = T.RandomPerspective(distortion_scale = 0.5, p = 0.5)
     img = transform(img)
     img = img.flatten(start_dim = 1)
     return img
