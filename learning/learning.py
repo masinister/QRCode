@@ -7,8 +7,9 @@ from torch.autograd import Variable
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 import os
+from utils import transform_encoded_img
 
-def train(enc, dec, trainloader, testloader, device, epochs):
+def train(enc, dec, shape, trainloader, testloader, device, epochs):
     criterion = nn.MSELoss()
     params = list(enc.parameters()) + list(dec.parameters())
     optimizer = optim.Adam(params, lr = 1e-3)
@@ -27,7 +28,7 @@ def train(enc, dec, trainloader, testloader, device, epochs):
             optimizer.zero_grad()
 
             imgs = enc(X)
-            # noise + transforms
+            imgs = transform_encoded_img(imgs, shape, device)
             outputs = dec(imgs)
             pred = outputs.round().int()
 
@@ -45,10 +46,10 @@ def train(enc, dec, trainloader, testloader, device, epochs):
 
             bar.set_description('Epoch %d, loss: %.3f, acc: %.3f'%(epoch + 1, running_loss, accuracy))
 
-        test(enc, dec, testloader, device)
+        test(enc, dec, shape, testloader, device)
     return enc, dec
 
-def test(enc, dec, dataloader, device):
+def test(enc, dec, shape, dataloader, device):
     enc.eval()
     dec.eval()
     correct = 0
@@ -58,7 +59,7 @@ def test(enc, dec, dataloader, device):
         for i, x in bar:
             X = Variable(x)
             imgs = enc(X)
-            # noise + transforms
+            imgs = transform_encoded_img(imgs, shape, device)
             outputs = dec(imgs)
 
             pred = outputs.round().int()

@@ -24,7 +24,7 @@ dec = Decoder(input_size = img_size, output_size = text_length).to(device)
 
 # print(enc(data[0].unsqueeze(0)).shape)
 
-enc, dec = train(enc, dec, trainloader, testloader, device, num_epochs)
+enc, dec = train(enc, dec, img_shape, trainloader, testloader, device, num_epochs)
 
 x = (torch.cuda.FloatTensor(text_length).uniform_() > 0.5).float()
 
