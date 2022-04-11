@@ -12,7 +12,7 @@ class TextDataset(Dataset):
         return x.to(self.device)
 
     def __len__(self):
-        return 10000
+        return 50000
 
 if __name__ == '__main__':
     dataset = TextDataset()
