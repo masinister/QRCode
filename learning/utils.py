@@ -21,15 +21,15 @@ def train_test_split(dataset, test_split, batch_size):
 
     return trainloader, testloader
 
-def testone(enc, dec, x, code_w, img_w, device):
+def testone(enc, dec, x, img_w, device):
     enc.eval()
     dec.eval()
     y = enc(x.unsqueeze(0))
-    t_y = transform_encoded_img(y, code_w, img_w, device)
+    t_y = transform_encoded_img(y, device)
     out = dec(t_y)
 
-    img = y.cpu().data.reshape((code_w, code_w))
-    t_img = t_y.cpu().data.reshape((img_w, img_w))
+    img = y.cpu().data.reshape((img_w,img_w))
+    t_img = t_y.cpu().data.reshape((img_w,img_w))
     pred = out.round().int()
 
     fig, ax = plt.subplots(2)
@@ -41,14 +41,9 @@ def testone(enc, dec, x, code_w, img_w, device):
     plt.show()
 
 
-def transform_encoded_img(y, code_w, img_w, device):
-    img = y.view(y.size(0), 1, code_w, code_w)
+def transform_encoded_img(y, device):
     transform = torch.nn.Sequential(
-        T.Resize((img_w, img_w), interpolation = T.InterpolationMode.NEAREST),
         T.RandomPerspective(distortion_scale = 0.1, p = 0.9),
-        # T.ColorJitter(0.5,0.5,0.5,0.5),
-        # T.Resize((20,20)),
     )
-    img = transform(img)
-    # img = img.flatten(start_dim = 1)
+    img = transform(y)
     return img
