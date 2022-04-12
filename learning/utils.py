@@ -21,15 +21,15 @@ def train_test_split(dataset, test_split, batch_size):
 
     return trainloader, testloader
 
-def testone(enc, dec, x, shape, device):
+def testone(enc, dec, x, code_w, img_w, device):
     enc.eval()
     dec.eval()
-    y = enc(x)
-    t_y = transform_encoded_img(y.unsqueeze(0), shape, device)
-    out = dec(y)
+    y = enc(x.unsqueeze(0))
+    t_y = transform_encoded_img(y, code_w, img_w, device)
+    out = dec(t_y)
 
-    img = y.cpu().data.reshape(shape)
-    t_img = t_y.cpu().data.reshape(shape)
+    img = y.cpu().data.reshape((code_w, code_w))
+    t_img = t_y.cpu().data.reshape((img_w, img_w))
     pred = out.round().int()
 
     fig, ax = plt.subplots(2)
@@ -41,9 +41,14 @@ def testone(enc, dec, x, shape, device):
     plt.show()
 
 
-def transform_encoded_img(y, shape, device):
-    img = y.view(y.size(0), shape[0], shape[1])
-    transform = T.RandomPerspective(distortion_scale = 0.5, p = 0.5)
+def transform_encoded_img(y, code_w, img_w, device):
+    img = y.view(y.size(0), 1, code_w, code_w)
+    transform = torch.nn.Sequential(
+        T.Resize((img_w, img_w), interpolation = T.InterpolationMode.NEAREST),
+        T.RandomPerspective(distortion_scale = 0.1, p = 0.9),
+        # T.ColorJitter(0.5,0.5,0.5,0.5),
+        # T.Resize((20,20)),
+    )
     img = transform(img)
-    img = img.flatten(start_dim = 1)
+    # img = img.flatten(start_dim = 1)
     return img

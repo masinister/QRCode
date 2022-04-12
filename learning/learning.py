@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import os
 from utils import transform_encoded_img
 
-def train(enc, dec, shape, trainloader, testloader, device, epochs):
+def train(enc, dec, code_w, img_w, trainloader, testloader, device, epochs):
     criterion = nn.MSELoss()
     params = list(enc.parameters()) + list(dec.parameters())
     optimizer = optim.Adam(params, lr = 1e-3)
@@ -28,7 +28,7 @@ def train(enc, dec, shape, trainloader, testloader, device, epochs):
             optimizer.zero_grad()
 
             imgs = enc(X)
-            imgs = transform_encoded_img(imgs, shape, device)
+            imgs = transform_encoded_img(imgs, code_w, img_w, device)
             outputs = dec(imgs)
             pred = outputs.round().int()
 
@@ -46,10 +46,10 @@ def train(enc, dec, shape, trainloader, testloader, device, epochs):
 
             bar.set_description('Epoch %d, loss: %.3f, acc: %.3f'%(epoch + 1, running_loss, accuracy))
 
-        test(enc, dec, shape, testloader, device)
+        test(enc, dec, code_w, img_w, testloader, device)
     return enc, dec
 
-def test(enc, dec, shape, dataloader, device):
+def test(enc, dec, code_w, img_w, dataloader, device):
     enc.eval()
     dec.eval()
     correct = 0
@@ -59,7 +59,7 @@ def test(enc, dec, shape, dataloader, device):
         for i, x in bar:
             X = Variable(x)
             imgs = enc(X)
-            imgs = transform_encoded_img(imgs, shape, device)
+            imgs = transform_encoded_img(imgs, code_w, img_w, device)
             outputs = dec(imgs)
 
             pred = outputs.round().int()
