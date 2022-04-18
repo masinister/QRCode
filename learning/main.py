@@ -2,7 +2,8 @@ import numpy as np
 import torch
 from torch.utils.data import DataLoader
 
-from model import ConvEncoder, ConvDecoder
+from model import Encoder, Decoder
+from conv_model import ConvEncoder, ConvDecoder
 from dataset import SquareDataset
 from learning import train
 from utils import train_test_split, testone
@@ -17,14 +18,14 @@ data = SquareDataset(width = code_w, device = device)
 
 trainloader, testloader = train_test_split(data, 0.2, batch_size)
 
-enc = ConvEncoder().to(device)
+enc = Encoder().to(device)
 dec = ConvDecoder().to(device)
 
 x = data[0].unsqueeze(0)
 
 print("Data shape:", x.shape)
 print("Encoded shape: ", enc(x).shape)
-print("Decoded shape: ", enc(dec(x)).shape)
+print("Decoded shape: ", dec(enc(x)).shape)
 
 img_w = enc(x).shape[-1]
 testone(enc, dec, x, img_w, device)

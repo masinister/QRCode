@@ -40,7 +40,8 @@ def testone(enc, dec, x, img_w, device):
 
 def transform_encoded_img(y, device):
     transform = torch.nn.Sequential(
-        T.RandomPerspective(0.1,0.5)
+        # T.RandomRotation(degrees=(0,10)),
+        T.RandomPerspective(0.1,0.9),
     )
     img = transform(y)
     return img
