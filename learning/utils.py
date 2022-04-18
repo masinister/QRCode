@@ -24,26 +24,23 @@ def train_test_split(dataset, test_split, batch_size):
 def testone(enc, dec, x, img_w, device):
     enc.eval()
     dec.eval()
-    y = enc(x.unsqueeze(0))
+    y = enc(x)
     t_y = transform_encoded_img(y, device)
     out = dec(t_y)
 
-    img = y.cpu().data.reshape((img_w,img_w))
+    x = x.cpu().data.reshape((16,16))
     t_img = t_y.cpu().data.reshape((img_w,img_w))
     pred = out.round().int()
 
     fig, ax = plt.subplots(2)
-    ax[0].imshow(img, interpolation='nearest', cmap = 'gray')
+    ax[0].imshow(x, interpolation='nearest', cmap = 'gray')
     ax[1].imshow(t_img, interpolation='nearest', cmap = 'gray')
-    print(x)
-    print(pred)
-    print((pred == x).sum().item() / x.size(0))
     plt.show()
 
 
 def transform_encoded_img(y, device):
     transform = torch.nn.Sequential(
-        T.RandomPerspective(distortion_scale = 0.1, p = 0.9),
+        T.RandomRotation(degrees = (0,2))
     )
     img = transform(y)
     return img

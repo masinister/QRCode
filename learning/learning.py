@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import os
 from utils import transform_encoded_img
 
-def train(enc, dec, img_w, trainloader, testloader, device, epochs):
+def train(enc, dec, trainloader, testloader, device, epochs):
     criterion = nn.MSELoss()
     params = list(enc.parameters()) + list(dec.parameters())
     optimizer = optim.Adam(params, lr = 1e-3)
@@ -40,16 +40,17 @@ def train(enc, dec, img_w, trainloader, testloader, device, epochs):
             running_loss += loss.item()
             total += X.size(0)
 
+            overlap = torch.flatten(X == pred, start_dim=1)
 
-            correct += torch.all(X == pred, dim = 1).sum(0).item()
+            correct += torch.all(overlap, dim = 1).sum(0).item()
             accuracy = correct / total
 
             bar.set_description('Epoch %d, loss: %.3f, acc: %.3f'%(epoch + 1, running_loss, accuracy))
 
-        test(enc, dec, img_w, testloader, device)
+        test(enc, dec, testloader, device)
     return enc, dec
 
-def test(enc, dec, img_w, dataloader, device):
+def test(enc, dec, dataloader, device):
     enc.eval()
     dec.eval()
     correct = 0
@@ -65,6 +66,8 @@ def test(enc, dec, img_w, dataloader, device):
             pred = outputs.round().int()
 
             total += X.size(0)
-            correct += torch.all(X == pred, dim = 1).sum(0).item()
+            overlap = torch.flatten(X == pred, start_dim=1)
+
+            correct += torch.all(overlap, dim = 1).sum(0).item()
             accuracy = correct / total
             bar.set_description('Accuracy: %.3f (%.3f / %.3f)' %(accuracy, correct, total))
