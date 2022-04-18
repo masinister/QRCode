@@ -10,13 +10,14 @@ class ConvEncoder(nn.Module):
         super(ConvEncoder, self).__init__()
 
         self.conv = nn.Sequential(nn.ConvTranspose2d(1, 8, (2,2), (1,1)),
-                                  nn.Dropout(0.02),
-                                  # nn.ReLU(),
+                                  nn.Dropout(0.1),
+                                  nn.ReLU(),
                                   nn.ConvTranspose2d(8, 8, (3,3), (2,2)),
-                                  # nn.ReLU(),
+                                  nn.Dropout(0.1),
+                                  nn.ReLU(),
                                   nn.ConvTranspose2d(8, 1, (4,4), (3,3)),
-                                  nn.Dropout(0.02),
-                                  # nn.ReLU(),
+                                  nn.Dropout(0.1),
+                                  nn.ReLU(),
                                   )
 
     def forward(self, x):
@@ -33,13 +34,13 @@ class ConvDecoder(nn.Module):
         super(ConvDecoder, self).__init__()
 
         self.conv = nn.Sequential(nn.Conv2d(1, 8, (4,4), (3,3)),
-                                  nn.Dropout(0.02),
+                                  nn.Dropout(0.1),
                                   nn.ReLU(),
                                   nn.Conv2d(8, 8, (3,3), (2,2)),
-                                  nn.Dropout(0.02),
+                                  nn.Dropout(0.1),
                                   nn.ReLU(),
                                   nn.Conv2d(8, 1, (2,2), (1,1)),
-                                  nn.Dropout(0.02),
+                                  nn.Dropout(0.1),
                                   nn.ReLU(),
                                   )
 
