@@ -28,7 +28,7 @@ def testone(enc, dec, x, img_w, device):
     t_y = transform_encoded_img(y, device)
     out = dec(t_y)
 
-    x = x.cpu().data.reshape((16,16))
+    x = x.cpu().data.reshape((8,8))
     t_img = t_y.cpu().data.reshape((img_w,img_w))
     pred = out.round().int()
 
@@ -40,8 +40,8 @@ def testone(enc, dec, x, img_w, device):
 
 def transform_encoded_img(y, device):
     transform = torch.nn.Sequential(
-        # T.RandomRotation(degrees=(0,10)),
-        T.RandomPerspective(0.1,0.9),
+        # T.RandomRotation(degrees=(0,90)),
+        T.RandomPerspective(0.2,0.9),
     )
     img = transform(y)
     return img

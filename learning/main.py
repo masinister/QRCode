@@ -10,9 +10,9 @@ from utils import train_test_split, testone
 
 device = torch.device("cuda")
 batch_size = 100
-num_epochs = 10
+num_epochs = 50
 
-code_w = 16
+code_w = 8
 
 data = SquareDataset(width = code_w, device = device)
 
@@ -31,5 +31,8 @@ img_w = enc(x).shape[-1]
 testone(enc, dec, x, img_w, device)
 
 enc, dec = train(enc, dec, trainloader, testloader, device, num_epochs)
+
+torch.save(enc.state_dict(),"enc.pth")
+torch.save(dec.state_dict(),"dec.pth")
 
 testone(enc, dec, x, img_w, device)

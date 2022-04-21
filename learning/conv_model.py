@@ -33,11 +33,14 @@ class ConvDecoder(nn.Module):
         super(ConvDecoder, self).__init__()
 
         self.conv = nn.Sequential(
-                nn.Upsample(scale_factor=2),                  
+                nn.Upsample(scale_factor=2),
                 nn.Conv2d(1, 128, 2, stride=2),
                 nn.LeakyReLU(0.2, inplace=True),
                 nn.Dropout2d(0.2),
                 nn.Upsample(scale_factor=2),
+                nn.Conv2d(128, 128, 2, stride=2),
+                nn.LeakyReLU(0.2, inplace=True),
+                nn.Dropout2d(0.2),
                 nn.Conv2d(128, 64, 2, stride=2),
                 nn.LeakyReLU(0.2, inplace=True),
                 nn.Dropout2d(0.2),
